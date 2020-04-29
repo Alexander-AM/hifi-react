@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "@reach/router";
 import { css } from "emotion";
 
-const Header = () => {
+const Header = (props) => {
     return (
-        <header id="header" className={styles}>
+        <header id="header" className={styles + " " + props.classNames}>
             <section id="header-top">
                 <section>
                     <img
@@ -229,27 +229,27 @@ const styles = css`
 
     /* Header Types */
     /* Sticky Header */
-    #header.header-sticky {
+    &.header-sticky {
         position: sticky;
     }
 
     /* Standard */
-    .header-standard .shop-item,
-    .header-standard .frontpage-item {
+    &.header-standard .shop-item,
+    &.header-standard .frontpage-item {
         display: none;
     }
 
     /* Frontpage */
-    .header-frontpage .shop-item {
+    &.header-frontpage .shop-item {
         display: none;
     }
 
     /* Shop */
-    .header-shop {
+    &.header-shop {
         padding-top: 15px;
     }
 
-    .header-shop .frontpage-item {
+    &.header-shop .frontpage-item {
         display: none;
     }
 

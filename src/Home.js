@@ -2,9 +2,13 @@ import React from "react";
 import { Link } from "@reach/router";
 import { css } from "emotion";
 
+import Header from "./Header";
+
 const Home = () => {
     return (
         <div className={styles}>
+            <Header classNames="header-frontpage" />
+
             <section id="top-banner">
                 <img
                     id="top-banner-logo"

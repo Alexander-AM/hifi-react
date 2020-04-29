@@ -44,5 +44,8 @@
     "bugs": {
         "url": "https://github.com/4480135/hifi-react/issues"
     },
-    "homepage": "https://github.com/4480135/hifi-react#readme"
+    "homepage": "https://github.com/4480135/hifi-react#readme",
+    "browserslist": [
+        "last 2 Chrome versions"
+    ]
 }
