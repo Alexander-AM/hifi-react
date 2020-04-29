@@ -32,7 +32,7 @@ const Shop = () => {
                         backgroundImage: `url('/assets/img/img0${curImage}.jpg')`,
                     }}
                 >
-                    <Link to={`/shop-category-list/?cate=${category}`}>
+                    <Link to={`/shop/category/${encodeURI(category)}`}>
                         {category}
                     </Link>
                 </section>
