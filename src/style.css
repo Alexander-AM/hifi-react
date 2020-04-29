@@ -1,0 +1,50 @@
+/* Imports */
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap");
+
+/* Base */
+body {
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    background-color: #101010;
+}
+
+address {
+    margin: 0;
+    font-style: normal;
+    font-weight: 600;
+}
+
+p {
+    margin: 0;
+}
+
+h1 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 8vw;
+}
+
+h4 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    line-height: 1em;
+}
+
+h5 {
+    font-size: 1.5rem;
+    margin: 0.25em 0;
+    color: #a99161;
+}
+
+h6 {
+    font-size: 1rem;
+    margin: 0.25em 0;
+    font-weight: bold;
+}
+
+@media screen and (min-width: 768px) {
+    h1 {
+        font-size: 3rem;
+    }
+}
