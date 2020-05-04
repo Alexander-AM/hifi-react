@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { Link } from "@reach/router";
 import { css } from "emotion";
 
 const Header = (props) => {
+    const categoryProp = props.category || "All";
+    const brandProp = props.brand || "All";
+
+    useLayoutEffect(() => {
+        const DOMnavSearchInput = document.querySelector("#nav-search-input");
+        const DOMnavSearchButton = document.querySelector("#nav-search-button");
+
+        const search = () => {
+            window.location.href = `/shop/list/${categoryProp}/${brandProp}/${
+                DOMnavSearchInput.value != "" ? DOMnavSearchInput.value : "All"
+            }`;
+        };
+
+        DOMnavSearchInput.addEventListener("keydown", (e) => {
+            if (e.keyCode === 13) {
+                search();
+            }
+        });
+
+        DOMnavSearchButton.addEventListener("click", () => {
+            search();
+        });
+    });
+
     return (
         <header id="header" className={styles + " " + props.classNames}>
             <section id="header-top">

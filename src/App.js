@@ -5,7 +5,7 @@ import { Router } from "@reach/router";
 import Home from "./Home";
 import Brands from "./Brands";
 import Shop from "./Shop";
-import ShopCategory from "./ShopCategory";
+import ShopList from "./ShopList";
 import ShopItem from "./ShopItem";
 import Footer from "./Footer";
 
@@ -17,7 +17,9 @@ const App = () => {
                     <Home path="/" />
                     <Brands path="/brands" />
                     <Shop path="/shop" />
-                    <ShopCategory path="/shop/category/:category" />
+                    <ShopList path="/shop/list/:category/:brand/:query" />
+                    <ShopList path="/shop/list/:category/:brand" />
+                    <ShopList path="/shop/list/:category/" />
                     <ShopItem path="/shop/item/:id" />
                 </Router>
 

@@ -8,16 +8,18 @@ const Shop = () => {
     const [categories, setCategories] = useState([]);
 
     async function loadCategories() {
-        // Data fetch
-        fetch("https://hifi-corner.herokuapp.com/api/v1/categories", {
-            method: "GET",
-        })
-            .then((response) => {
-                return response.json();
+        if (!categories.length) {
+            // Data fetch
+            fetch("https://hifi-corner.herokuapp.com/api/v1/categories", {
+                method: "GET",
             })
-            .then((json) => {
-                setCategories(json);
-            });
+                .then((response) => {
+                    return response.json();
+                })
+                .then((json) => {
+                    setCategories(json);
+                });
+        }
     }
 
     const showCategories = () => {
@@ -32,7 +34,7 @@ const Shop = () => {
                         backgroundImage: `url('/assets/img/img0${curImage}.jpg')`,
                     }}
                 >
-                    <Link to={`/shop/category/${encodeURI(category)}`}>
+                    <Link to={`/shop/list/${encodeURI(category)}`}>
                         {category}
                     </Link>
                 </section>
@@ -77,14 +79,23 @@ const Shop = () => {
         <div className={styles}>
             <Header classNames="header-standard header-sticky" />
 
-            <article className="shop-grid">
-                {!categories.length ? <h1>Loading...</h1> : showCategories()}
-            </article>
+            {!categories.length ? (
+                <h1 className="loading-text">Loading...</h1>
+            ) : (
+                <article className="shop-grid">{showCategories()}</article>
+            )}
         </div>
     );
 };
 
 const styles = css`
+    .loading-text {
+        text-align: center;
+        margin: 3em auto;
+        color: white;
+        display: block;
+    }
+
     .shop-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);

@@ -1,20 +1,142 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { css } from "emotion";
 
 import Header from "./Header";
 import { Link } from "@reach/router";
 
 const ShopCategory = (props) => {
+    const categoryProp = props.category || "All";
+    const brandProp = props.brand || "All";
+    const queryProp = props.query || "";
+
+    const [products, setProducts] = useState([]);
+
+    const moveLocation = (type, location) => {
+        if (type == "category") {
+            window.location.href = `/shop/list/${location}/${brandProp}/${queryProp}`;
+        } else if (type == "manufacturer") {
+            window.location.href = `/shop/list/${categoryProp}/${location}/${queryProp}`;
+        } else if (type == "query") {
+            window.location.href = `/shop/list/${categoryProp}/${brandProp}/${location}`;
+        }
+    };
+
+    useLayoutEffect(() => {
+        document
+            .querySelector(".shop-card-container")
+            .addEventListener("click", (e) => {
+                if (e.target.tagName !== "BUTTON") {
+                    for (let i = 0; i < e.path.length; i++) {
+                        if (e.path[i].classList.contains("shop-card")) {
+                            window.location.href = e.path[i].getAttribute(
+                                "data-link"
+                            );
+                            break;
+                        }
+                    }
+                }
+            });
+
+        document.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (e.target.classList.contains("relocator-category")) {
+                moveLocation(
+                    "category",
+                    e.target.getAttribute("data-relocation")
+                );
+            } else if (e.target.classList.contains("relocator-manufacturer")) {
+                moveLocation(
+                    "manufacturer",
+                    e.target.getAttribute("data-relocation")
+                );
+            }
+        });
+
+        if (!products.length) {
+            // Data fetch
+            fetch(
+                `https://hifi-corner.herokuapp.com/api/v1/products?category=${categoryProp}`,
+                { method: "GET" }
+            )
+                .then((response) => {
+                    return response.json();
+                })
+                .then((json) => {
+                    setProducts(
+                        json.filter((product) => {
+                            return (
+                                (brandProp == "All"
+                                    ? true
+                                    : product.make == brandProp) &&
+                                (queryProp == "All"
+                                    ? true
+                                    : (product.make + product.model).includes(
+                                          queryProp
+                                      ))
+                            );
+                        })
+                    );
+                });
+        }
+    }, []);
+
+    let createElement = (product) => {
+        let determinedClass = "standard";
+
+        if (product.price === undefined) {
+            determinedClass = "no-price";
+        } else if (product["old-price"] === undefined) {
+            determinedClass = "no-old-price";
+        }
+
+        return (
+            <article
+                key={product.sku}
+                className={`shop-card shop-card-${determinedClass}`}
+                data-link={`/shop/item/${product.sku}`}
+            >
+                <div
+                    className="shop-card-image"
+                    style={{
+                        backgroundImage: `url(${
+                            product.images !== undefined
+                                ? product.images[0]
+                                : ""
+                        })`,
+                    }}
+                ></div>
+                <p className="shop-card-name">
+                    {product.make + " " + product.model}
+                </p>
+                <div className="shop-card-price-container">
+                    <span className="shop-card-old-price">
+                        £{product["old-price"]}
+                    </span>
+                    <span className="shop-card-price">£{product.price}</span>
+                </div>
+                <button className="shop-card-cart-btn">ADD TO CART</button>
+                <button className="shop-card-price-btn">
+                    ENQUIRE FOR PRICE
+                </button>
+            </article>
+        );
+    };
+
     return (
         <div className={styles}>
-            <Header classNames="header-shop header-sticky" />
+            <Header
+                category={categoryProp}
+                brand={brandProp}
+                classNames="header-shop header-sticky"
+            />
 
             <article className="shop-wrapper">
                 <article className="breadcrumbs">
-                    <Link to="">Home</Link>{" "}
-                    <span className="breadcrumbs-slash"></span>{" "}
+                    <Link to="/shop">Home</Link>
+                    <span className="breadcrumbs-slash"></span>
                     <span className="shop-editable-breadcrumb-title">
-                        Amplifiers
+                        {categoryProp}
                     </span>
                 </article>
 
@@ -185,12 +307,17 @@ const ShopCategory = (props) => {
                         </section>
                     </section>
                     <section className="shop-center">
-                        <h4 className="shop-editable-title">Amplifiers</h4>
+                        <h4 className="shop-editable-title">{categoryProp}</h4>
                         <section className="shop-settings">
                             <section className="shop-settings-upper">
                                 <section>
-                                    <label htmlFor="">SORT BY:</label>
-                                    <select name="select-sort-by">
+                                    <label htmlFor="select-sort-by-top">
+                                        SORT BY:
+                                    </label>
+                                    <select
+                                        name="select-sort-by"
+                                        id="select-sort-by-top"
+                                    >
                                         <option value="Price">Price</option>
                                     </select>
                                     <i className="fas fa-long-arrow-alt-up"></i>
@@ -202,8 +329,13 @@ const ShopCategory = (props) => {
                                         </span>{" "}
                                         Item(s)
                                     </span>
-                                    <label htmlFor="">SHOW:</label>
-                                    <select name="select-show">
+                                    <label htmlFor="select-show-top">
+                                        SHOW:
+                                    </label>
+                                    <select
+                                        name="select-show"
+                                        id="select-show-top"
+                                    >
                                         <option value="300">300</option>
                                     </select>
                                 </section>
@@ -218,15 +350,23 @@ const ShopCategory = (props) => {
                                 </button>
                             </section>
                         </section>
-                        <section className="shop-card-container"></section>
+                        <section className="shop-card-container">
+                            {!products.length ? (
+                                <h1 className="loading-text">Loading...</h1>
+                            ) : (
+                                products.map((product) => {
+                                    return createElement(product);
+                                })
+                            )}
+                        </section>
                         <p className="shop-invisible">Nothing was found here</p>
                         <section className="shop-settings">
                             <section className="shop-settings-upper">
                                 <section>
-                                    <label htmlFor="select-sort-by">
+                                    <label htmlFor="select-sort-by-bottom">
                                         SORT BY:
                                     </label>
-                                    <select name="">
+                                    <select name="select-sort-by-bottom">
                                         <option value="Price">Price</option>
                                     </select>
                                     <i className="fas fa-long-arrow-alt-up"></i>
@@ -238,8 +378,13 @@ const ShopCategory = (props) => {
                                         </span>{" "}
                                         Item(s)
                                     </span>
-                                    <label htmlFor="">SHOW:</label>
-                                    <select name="select-show">
+                                    <label htmlFor="select-show-bottom">
+                                        SHOW:
+                                    </label>
+                                    <select
+                                        name="select-show"
+                                        id="select-show-bottom"
+                                    >
                                         <option value="300">300</option>
                                     </select>
                                 </section>
@@ -324,6 +469,11 @@ const ShopCategory = (props) => {
 };
 
 const styles = css`
+    .loading-text {
+        grid-column: 1 / 5;
+        text-align: center;
+    }
+
     .shop-wrapper {
         background-color: white;
         max-width: 100%;
